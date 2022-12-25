@@ -66,6 +66,9 @@
         { id: 3, gorevAdi: "Görev 3" },
         { id: 4, gorevAdi: "Görev 4" },
       ];
+      let editId;
+      let iseditTask = false;
+      let taskInput = document.querySelector("#txtTaskName");
 
       displayTasks();
 
@@ -86,7 +89,7 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li onclick={deleteTask(${gorev.id})}><a class="dropdown-item" href="#"><i class="fa-solid fa-trash"></i> Sil</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fa-solid fa-pen"></i> Düzenle</a></li>
+                            <li onclick='editTask(${gorev.id}, "${gorev.gorevAdi}")'><a class="dropdown-item" href="#"><i class="fa-solid fa-pen"></i> Düzenle</a></li>
                         </ul>
                     </div>
                     </li>
@@ -109,15 +112,25 @@
         });
 
       function newTask(event) {
-        let taskInput = document.querySelector("#txtTaskName");
-
         if (taskInput.value == "") {
           alert("görev girmelisiniz");
         } else {
-          gorevListesi.push({
-            id: gorevListesi.length + 1,
-            gorevAdi: taskInput.value,
-          });
+          if (!iseditTask) {
+            // ekleme
+            gorevListesi.push({
+              id: gorevListesi.length + 1,
+              gorevAdi: taskInput.value,
+            });
+          } else {
+            // güncelleme
+            console.log(editId, "asd");
+            for (let gorev of gorevListesi) {
+              if (gorev.id == editId) {
+                gorev.gorevAdi = taskInput.value;
+              }
+              iseditTask = false;
+            }
+          }
           taskInput.value = "";
           displayTasks();
         }
@@ -128,6 +141,13 @@
         let deleteId = gorevListesi.findIndex((gorev) => gorev.id === id);
         gorevListesi.splice(deleteId, 1);
         displayTasks();
+      }
+      function editTask(taskId, taskName) {
+        editId = taskId;
+        iseditTask = true;
+        taskInput.value = taskName;
+        taskInput.focus();
+        console.log(taskId);
       }
     </script>
   </body>
